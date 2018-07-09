@@ -1,5 +1,8 @@
 package com.supermarket.sso.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -101,13 +104,13 @@ public class UserController {
 	 */ 
 	@RequestMapping(value="/user/login",method=RequestMethod.POST)
 	@ResponseBody
-	public KklResult login(String username,String password) {
+	public KklResult login(String username,String password,HttpServletRequest request,HttpServletResponse response) {
 		KklResult result = null;
 		if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
 			return KklResult.build(400, "username or password cannot be empty");
 		}
 		try {
-			result=userService.login(username,password);
+			result=userService.login(username,password,request,response);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return KklResult.build(500, ExceptionUtil.getStackTrace(e));

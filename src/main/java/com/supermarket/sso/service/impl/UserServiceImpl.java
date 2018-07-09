@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import com.supermarket.common.utils.CookieUtils;
 import com.supermarket.common.utils.JsonUtils;
 import com.supermarket.common.utils.KklResult;
 import com.supermarket.mapper.TbUserMapper;
@@ -122,7 +126,7 @@ public class UserServiceImpl implements UserService {
 	 * @see com.supermarket.sso.service.UserService#login(java.lang.String, java.lang.String)   
 	 */ 
 	@Override
-	public KklResult login(String username, String password) {
+	public KklResult login(String username, String password,HttpServletRequest request,HttpServletResponse response) {
 		TbUserExample example = new TbUserExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andUsernameEqualTo(username);
@@ -142,6 +146,8 @@ public class UserServiceImpl implements UserService {
 		jedisClient.set(USER_SESSION_KEY+":"+token, JsonUtils.objectToJson(user));
 		//set session expire time
 		jedisClient.expire(USER_SESSION_KEY+":"+token, SESSION_EFFECTIVE_DURATION);
+		//add write cookie logic
+		CookieUtils.setCookie(request, response, "TT_TOKEN", token);
 		return KklResult.ok(token);
 	}
 
@@ -182,7 +188,7 @@ public class UserServiceImpl implements UserService {
 		} catch (Exception e) {
 			return KklResult.build(400, "token already expired");
 		}
-		return KklResult.ok();
+		return KklResult.ok("");
 	} 
 	
 	

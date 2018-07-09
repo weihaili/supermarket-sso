@@ -1,5 +1,8 @@
 package com.supermarket.sso.service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.supermarket.common.utils.KklResult;
 import com.supermarket.pojo.TbUser;
 
@@ -35,7 +38,7 @@ public interface UserService {
 	 * @return: KklResult      
 	 * @throws   
 	 */ 
-	KklResult login(String username, String password);
+	KklResult login(String username, String password,HttpServletRequest request,HttpServletResponse response);
 
 	/**   
 	 * @Title: getUserInfoByToken   
